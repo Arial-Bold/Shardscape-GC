@@ -185,20 +185,9 @@ static void free_conn(Conn *c) {
 	else if (was == P_OPEN) push_ev(K_SERVED, id, SRV_EV_CLOSE, NULL, 0);
 }
 
+/* hosts are typed as numbers (192.168.1.20): libogc2 has no name lookup for the GameCube */
 static int resolve(const char *host, struct in_addr *out) {
-#ifdef GEKKO
-	if (inet_aton(host, out)) return 1;
-	struct hostent *h = net_gethostbyname(host);
-	if (!h || !h->h_addr_list || !h->h_addr_list[0]) return 0;
-	memcpy(out, h->h_addr_list[0], sizeof(*out));
-	return 1;
-#else
-	if (inet_aton(host, out)) return 1;
-	struct hostent *h = gethostbyname(host);
-	if (!h || !h->h_addr_list[0]) return 0;
-	memcpy(out, h->h_addr_list[0], sizeof(*out));
-	return 1;
-#endif
+	return inet_aton(host, out) != 0;
 }
 
 /* ------------------------------------------------------------ connecting */

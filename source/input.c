@@ -58,13 +58,16 @@ void input_update(float screen_w, int speed_setting) {
 	float ax = stick_axis(sx), ay = stick_axis(sy);
 	moved = ax != 0 || ay != 0;
 	if (moved) {
-		if (speed_setting < 1) speed_setting = 1; if (speed_setting > 10) speed_setting = 10;
+		if (speed_setting < 1) speed_setting = 1;
+		if (speed_setting > 10) speed_setting = 10;
 		float speed = 3.1f + (speed_setting - 1) * ((26.0f - 3.1f) / 9.0f);
 		cx += ax * speed * steps;
 		cy -= ay * speed * steps;   /* stick up = positive Y */
 	}
-	if (cx < 0) cx = 0; if (cx > screen_w - 1) cx = screen_w - 1;
-	if (cy < 0) cy = 0; if (cy > 479) cy = 479;
+	if (cx < 0) cx = 0;
+	if (cx > screen_w - 1) cx = screen_w - 1;
+	if (cy < 0) cy = 0;
+	if (cy > 479) cy = 479;
 
 	if (held != prev_held) { repeat_mask = held; repeat_timer = 0; } else repeat_timer++;
 	float target = (held & PAD_BUTTON_A) ? 1.0f : 0.0f;

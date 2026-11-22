@@ -169,8 +169,10 @@ void gfx_scissor(float x, float y, float w, float h) {
 	float sx = rmode->fbWidth / (vr - vl), sy = rmode->efbHeight / (vb - vt);
 	int x0 = (int)floorf((x - vl) * sx), y0 = (int)floorf((y - vt) * sy);
 	int x1 = (int)ceilf((x + w - vl) * sx), y1 = (int)ceilf((y + h - vt) * sy);
-	if (x0 < 0) x0 = 0; if (y0 < 0) y0 = 0;
-	if (x1 > rmode->fbWidth) x1 = rmode->fbWidth; if (y1 > rmode->efbHeight) y1 = rmode->efbHeight;
+	if (x0 < 0) x0 = 0;
+	if (y0 < 0) y0 = 0;
+	if (x1 > rmode->fbWidth) x1 = rmode->fbWidth;
+	if (y1 > rmode->efbHeight) y1 = rmode->efbHeight;
 	if (x1 <= x0 || y1 <= y0) { GX_SetScissor(0, 0, 1, 1); return; }
 	GX_SetScissor(x0, y0, x1 - x0, y1 - y0);
 }
@@ -376,8 +378,8 @@ static void glyphs(float px, float base, const char *buf, float size, Color col)
 
 void gfx_text(float x, float y, const char *s, float size, Color c, int align, float max_w) {
 	if (!s || !*s) return;
-	char buf[200];
-	snprintf(buf, sizeof(buf), "%s", s);
+	char buf[208];
+	snprintf(buf, 200, "%s", s);
 	if (max_w > 0 && gfx_text_width(buf, size) > max_w) {
 		size_t n = strlen(buf);
 		while (n > 0) {

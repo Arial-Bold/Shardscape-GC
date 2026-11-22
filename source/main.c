@@ -39,7 +39,7 @@ const char app_version[] = "1.0";
 
 /* the game's scripts, built into the program (see the Makefile) */
 extern const u8 stubs_js[], engine_js[], gc_server_js[], gc_ui_js[];
-extern const u32 stubs_js_size, engine_js_size, gc_server_js_size, gc_ui_js_size;
+extern const u8 stubs_js_end[], engine_js_end[], gc_server_js_end[], gc_ui_js_end[];
 
 static mutex_t game_lock = LWP_MUTEX_NULL;   /* held while the scripts run */
 static mutex_t ui_lock = LWP_MUTEX_NULL;     /* the hints and the pointer's state */
@@ -117,10 +117,10 @@ const char *plat_net_message(void) { return net_state() == NET_FAILED ? net_mess
 static void *game_main(void *arg) {
 	(void)arg;
 	const JsSource src[] = {
-		{ "stubs.js", (const char *)stubs_js, stubs_js_size },
-		{ "engine.js", (const char *)engine_js, engine_js_size },
-		{ "gc_server.js", (const char *)gc_server_js, gc_server_js_size },
-		{ "gc_ui.js", (const char *)gc_ui_js, gc_ui_js_size },
+		{ "stubs.js", (const char *)stubs_js, (size_t)(stubs_js_end - stubs_js) },
+		{ "engine.js", (const char *)engine_js, (size_t)(engine_js_end - engine_js) },
+		{ "gc_server.js", (const char *)gc_server_js, (size_t)(gc_server_js_end - gc_server_js) },
+		{ "gc_ui.js", (const char *)gc_ui_js, (size_t)(gc_ui_js_end - gc_ui_js) },
 	};
 	LWP_MutexLock(game_lock);
 	bool ok = js_start_mem(src, 4, 10u * 1024 * 1024);
