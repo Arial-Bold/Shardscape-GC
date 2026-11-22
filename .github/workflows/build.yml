@@ -1,0 +1,32 @@
+name: Build Shardscape
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get the source code
+        uses: actions/checkout@v5
+
+      - name: Download QuickJS
+        run: sh get-deps.sh
+
+      - name: Build the .dol
+        run: docker run --rm -v "$PWD:/src" -w /src ghcr.io/extremscorner/libogc2:latest make
+
+      - name: Gather files for the SD card
+        run: |
+          mkdir -p package/shardscape
+          cp shardscape.dol package/shardscape/default.dol
+          cp dist/opening.bnr package/shardscape/opening.bnr
+
+      - name: Upload result
+        uses: actions/upload-artifact@v6
+        with:
+          name: shardscape
+          path: package/
